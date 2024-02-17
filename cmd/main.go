@@ -1,7 +1,7 @@
 package main
 
 import (
-	spotistats "github.com/erfgypO/spotistats/bin"
+	spotistats "github.com/erfgypO/spotistats/lib"
 )
 
 func main() {
