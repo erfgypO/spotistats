@@ -5,6 +5,7 @@ import (
 	"github.com/erfgypO/spotistats/lib/data"
 	"github.com/joho/godotenv"
 	"log"
+	"time"
 )
 
 func Run() {
@@ -25,6 +26,9 @@ func Run() {
 	if *runApiFlag {
 		runApi()
 	} else {
-		runScrapper()
+		for {
+			runScrapper()
+			time.Sleep(time.Second * 10)
+		}
 	}
 }

@@ -15,17 +15,14 @@ import (
 
 func scrapDataForUser(user data.UserEntity, results chan<- data.Datapoint, wg *sync.WaitGroup) {
 	defer wg.Done()
-	log.Printf("Get data for user: %s", user.Id)
 
 	client := spotify.CreateSpotifyClient()
 	currentlyPlaying, err := client.GetCurrentlyPlaying(user.Token.AccessToken)
 	if err != nil {
-		log.Printf("Error getting data for user: %s", user.Uid)
 		return
 	}
 
 	if !currentlyPlaying.IsPlaying {
-		log.Printf("User: %s is not playing anything", user.Uid)
 		return
 	}
 
@@ -106,7 +103,6 @@ func runScrapper() {
 	}
 
 	if len(currentlyPlaying) == 0 {
-		log.Printf("No data to insert")
 		return
 	}
 
