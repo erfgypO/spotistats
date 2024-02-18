@@ -4,21 +4,24 @@ import (
 	"github.com/erfgypO/spotistats/lib/data"
 	"github.com/golang-jwt/jwt/v5"
 	"os"
+	"time"
 )
 
 func createJWT(user data.UserEntity) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"uid":      user.Id,
 		"username": user.Username,
+		"exp":      time.Now().Add(time.Hour * 2).Unix(),
 	})
 
 	return token.SignedString([]byte(os.Getenv("JWT_SECRET")))
 }
 
 func verifyJWT(tokenString string) (jwt.MapClaims, bool) {
-	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+	token, err := jwt.ParseWithClaims(tokenString, jwt.MapClaims{}, func(token *jwt.Token) (interface{}, error) {
 		return []byte(os.Getenv("JWT_SECRET")), nil
 	})
+
 	if err != nil {
 		return nil, false
 	}
