@@ -20,8 +20,8 @@ type TokenEntity struct {
 }
 
 type Datapoint struct {
-	Id        interface{} `bson:"_id,omitempty"`
-	Owner     interface{}
-	Data      spotify.CurrentlyPlaying
-	CreatedAt int64
+	Id        interface{}              `json:"id" bson:"_id,omitempty"`
+	Owner     interface{}              `json:"owner"`
+	Data      spotify.CurrentlyPlaying `json:"data"`
+	CreatedAt int64                    `json:"createdat"`
 }

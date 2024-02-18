@@ -15,6 +15,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strconv"
 	"strings"
 )
 
@@ -275,16 +276,14 @@ func HandleSignUp(writer http.ResponseWriter, request *http.Request) {
 
 	user.Id = res.InsertedID
 
-	tokenString, err := createJWT(user)
+	tokenResponse, err := createJWT(user)
 	if err != nil {
 		log.Println(err)
 		writer.WriteHeader(500)
 		return
 	}
 
-	response := TokenResponse{AccessToken: tokenString}
-
-	writeJsonResponse(writer, response, 200)
+	writeJsonResponse(writer, tokenResponse, 200)
 }
 
 func HandleSignIn(writer http.ResponseWriter, request *http.Request) {
@@ -324,12 +323,137 @@ func HandleSignIn(writer http.ResponseWriter, request *http.Request) {
 		return
 	}
 
-	tokenString, err := createJWT(user)
+	tokenResponse, err := createJWT(user)
 	if err != nil {
 		log.Println(err)
 		writer.WriteHeader(500)
 		return
 	}
 
-	writeJsonResponse(writer, TokenResponse{AccessToken: tokenString}, 200)
+	writeJsonResponse(writer, tokenResponse, 200)
+}
+
+func HandleGetArtistStats(writer http.ResponseWriter, request *http.Request) {
+	afterQuery := request.URL.Query().Get("after")
+	after, err := strconv.ParseInt(afterQuery, 10, 64)
+	if err != nil {
+		after = 0
+	}
+
+	mongoClient, err := data.CreateClient()
+	if err != nil {
+		log.Println(err)
+		writer.WriteHeader(500)
+		return
+	}
+
+	defer func() {
+		_ = mongoClient.Disconnect(context.TODO())
+	}()
+
+	collection := mongoClient.Database("spotistats").Collection(data.DatapointCollectionName)
+
+	id, err := primitive.ObjectIDFromHex(request.Context().Value("uid").(string))
+	if err != nil {
+		log.Println(err)
+		writer.WriteHeader(500)
+		return
+	}
+
+	findOptions := options.Find().SetSort(bson.D{{"createdat", -1}})
+	filter := bson.D{
+		{"owner", id},
+		{"createdat", bson.D{{"$gte", after}}},
+	}
+	cursor, err := collection.Find(context.TODO(), filter, findOptions)
+	if err != nil {
+		log.Println(err)
+		writer.WriteHeader(500)
+		return
+	}
+
+	var datapoints []data.Datapoint
+	err = cursor.All(context.TODO(), &datapoints)
+	if err != nil {
+		log.Println(err)
+		writer.WriteHeader(500)
+		return
+	}
+
+	totalCount := 0
+	artistCount := make(map[string]int)
+	for _, datapoint := range datapoints {
+		if datapoint.Data.Item.Type == "track" {
+			artistCount[datapoint.Data.Item.Artists[0].Name]++
+			totalCount++
+		}
+	}
+
+	response := make([]DataPercentage, 0)
+
+	for artist, count := range artistCount {
+		percentage := float64(count) / float64(totalCount)
+		response = append(response, DataPercentage{
+			Name:           artist,
+			Percentage:     percentage,
+			DatapointCount: count,
+		})
+	}
+
+	writeJsonResponse(writer, response, 200)
+}
+
+func HandleGetDatapoints(writer http.ResponseWriter, request *http.Request) {
+	afterQuery := request.URL.Query().Get("after")
+	after, err := strconv.ParseInt(afterQuery, 10, 64)
+	if err != nil {
+		after = 0
+	}
+
+	mongoClient, err := data.CreateClient()
+	if err != nil {
+		log.Println(err)
+		writer.WriteHeader(500)
+		return
+	}
+
+	defer func() {
+		_ = mongoClient.Disconnect(context.TODO())
+	}()
+
+	collection := mongoClient.Database("spotistats").Collection(data.DatapointCollectionName)
+
+	id, err := primitive.ObjectIDFromHex(request.Context().Value("uid").(string))
+	if err != nil {
+		log.Println(err)
+		writer.WriteHeader(500)
+		return
+	}
+
+	findOptions := options.Find().SetSort(bson.D{{"createdat", -1}})
+	filter := bson.D{
+		{"owner", id},
+		{"createdat", bson.D{{"$gte", after}}},
+	}
+	cursor, err := collection.Find(context.TODO(), filter, findOptions)
+	if err != nil {
+		log.Println(err)
+		writer.WriteHeader(500)
+		return
+	}
+
+	var datapoints []data.Datapoint
+	err = cursor.All(context.TODO(), &datapoints)
+	if err != nil {
+		log.Println(err)
+		writer.WriteHeader(500)
+		return
+	}
+
+	items := make([]spotify.CurrentlyPlaying, 0)
+	for _, datapoint := range datapoints {
+		items = append(items, datapoint.Data)
+	}
+
+	writeJsonResponse(writer, items, 200)
 }

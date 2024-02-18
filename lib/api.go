@@ -16,6 +16,8 @@ func runApi() {
 	mux.HandleFunc("POST /sign-up", server.HandleSignUp)
 	mux.HandleFunc("POST /sign-in", server.HandleSignIn)
 	mux.HandleFunc("GET /user/me", server.UseAuth(server.HandleGetMe))
+	// mux.HandleFunc("GET /datapoints", server.UseAuth(server.HandleGetDatapoints))
+	mux.HandleFunc("GET /stats/artists", server.UseAuth(server.HandleGetArtistStats))
 	err := http.ListenAndServe(os.Getenv("API_URL"), mux)
 	if err != nil {
 		log.Panicln(err)
