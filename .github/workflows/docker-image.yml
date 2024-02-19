@@ -8,6 +8,8 @@ jobs:
   build-backend:
     runs-on: self-hosted
     steps:
+    - name: Debug
+      run: ls -la
     - uses: actions/checkout@v3
     - name: Build the Docker image
       run: cd backend && docker build ./backend --file ./backend/Dockerfile --platform linux/arm64/v8 --tag jhell/spotistats:${{ github.run_number }}.${{ github.run_attempt }} --tag jhell/spotistats:latest
