@@ -22,7 +22,7 @@ jobs:
         tags: |
           jhell/spotistats:${{ github.run_number }}.${{ github.run_attempt }}
           jhell/spotistats:latest
-  deploy-bac:
+  deploy-backend:
     runs-on: ubuntu-latest
     needs: build-backend
     steps:
