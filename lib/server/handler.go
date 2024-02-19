@@ -15,6 +15,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"sort"
 	"strconv"
 	"strings"
 )
@@ -399,6 +400,10 @@ func HandleGetArtistStats(writer http.ResponseWriter, request *http.Request) {
 			DatapointCount: count,
 		})
 	}
+
+	sort.Slice(response, func(i, j int) bool {
+		return response[i].DatapointCount > response[j].DatapointCount
+	})
 
 	writeJsonResponse(writer, response, 200)
 }
