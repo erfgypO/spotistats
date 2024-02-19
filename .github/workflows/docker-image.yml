@@ -29,6 +29,7 @@ jobs:
     steps:
     - name: Update deployment image
       uses: steebchen/kubectl@v2.0.0
+      env:
+        KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG }}
       with:
-        config: ${{ secrets.KUBE_CONFIG }}
-        command: "set image deployment/spotistats-api-deployment spotistats-api=jhell/spotistats:${{ github.run_number }}.${{ github.run_attempt }}"
+        args: "set image deployment/spotistats-api-deployment spotistats-api=jhell/spotistats:${{ github.run_number }}.${{ github.run_attempt }}"
