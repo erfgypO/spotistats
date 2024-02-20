@@ -303,7 +303,7 @@ func HandleSignIn(writer http.ResponseWriter, request *http.Request) {
 		writer.WriteHeader(500)
 		return
 	}
-	
+
 	log.Printf("Sign in user %s", signInRequest.Username)
 	mongoClient, err := data.CreateClient()
 	if err != nil {
