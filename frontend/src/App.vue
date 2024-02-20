@@ -3,11 +3,25 @@
     <v-app-bar color="primary">
       <v-app-bar-title>Spotistats</v-app-bar-title>
     </v-app-bar>
-    <router-view />
+    <v-main>
+      <router-view />
+    </v-main>
   </v-app>
 </template>
 
 <script setup lang="ts">
+import {onMounted} from "vue";
+import {useUserStore} from "@/store/user";
+import {useAppStore} from "@/store/app";
+
+const userStore = useUserStore();
+const appStore = useAppStore();
+
+onMounted(async () => {
+  if (appStore.expiresAt * 1000 > Date.now()) {
+    await userStore.fetchUser();
+  }
+});
 </script>
 
 <style>

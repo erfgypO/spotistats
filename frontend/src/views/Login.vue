@@ -2,6 +2,7 @@
 import {computed, ref} from "vue";
 import {useAppStore} from "@/store/app";
 import {useRouter} from "vue-router";
+import {useUserStore} from "@/store/user";
 
 const username = defineModel<string>("username");
 const password = defineModel<string>("password");
@@ -15,14 +16,14 @@ const disableButtons = computed(() => {
 const appStore = useAppStore();
 
 const loadingBtn = ref('');
-
+const userStore = useUserStore();
 async function login() {
   loadingBtn.value = 'login';
   await appStore.login(username.value!, password.value!);
   loadingBtn.value = '';
 
   if(appStore.expiresAt * 1000 > Date.now()) {
-    await router.push('/');
+    await router.push(userStore.connectedToSpotify ? '/' : '/connect' );
   } else {
     console.log('Login failed');
   }

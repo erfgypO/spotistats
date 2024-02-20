@@ -2,6 +2,7 @@
 import { defineStore } from 'pinia'
 import httpClient from "@/store/httpClient";
 import {LoginResponse} from "@/types/response";
+import {useUserStore} from "@/store/user";
 
 export const useAppStore = defineStore('app', {
   state: () => ({
@@ -20,11 +21,14 @@ export const useAppStore = defineStore('app', {
           this.accessToken = response.data.accessToken;
           this.expiresAt = response.data.expiresAt;
           localStorage.setItem('token', this.accessToken);
+
+          const userStore = useUserStore();
+          await userStore.fetchUser();
         }
       } catch (e) {
         console.error(e);
       }
-
     }
-  }
+  },
+  persist: true,
 })

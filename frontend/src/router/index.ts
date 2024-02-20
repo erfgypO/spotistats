@@ -1,6 +1,7 @@
 // Composables
 import { createRouter, createWebHistory } from 'vue-router'
 import {useAppStore} from "@/store/app";
+import {useUserStore} from "@/store/user";
 
 const routes = [
   {
@@ -15,6 +16,11 @@ const routes = [
         // which is lazy-loaded when the route is visited.
         component: () => import('@/views/Home.vue'),
       },
+      {
+        path: 'connect',
+        name: 'Connect',
+        component: () => import('@/views/ConnectSpotify.vue'),
+      }
     ],
   },
   {
@@ -45,6 +51,11 @@ router.beforeEach((to, from, next) => {
     return;
   }
 
+  const userStore = useUserStore();
+  if(!to.path.startsWith('/anon') && to.name !== 'Connect' && !userStore.connectedToSpotify) {
+    next('/connect');
+    return;
+  }
   next();
 });
 

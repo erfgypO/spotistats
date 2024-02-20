@@ -10,7 +10,7 @@ export interface ErrorResponse {
 export interface UserResponse {
   id: number;
   username: string;
-  displayname: string;
-  createdAt: string;
-  updatedAt: string;
+  displayName: string;
+  connectedToSpotify: boolean;
+  datapointCount: number;
 }
