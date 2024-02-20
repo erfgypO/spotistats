@@ -40,7 +40,7 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
   const appStore = useAppStore();
-  if(!to.path.startsWith('/anon') && (appStore.expiresAt <= (Date.now() / 1000) || localStorage.getItem('token') === null)){
+  if(!to.path.startsWith('/anon') && (appStore.expiresAt * 1000 <= Date.now() || localStorage.getItem('token') === null)){
     next('/anon/login');
     return;
   }

@@ -184,9 +184,9 @@ func HandleGetMe(writer http.ResponseWriter, request *http.Request) {
 	userResponse := struct {
 		Id                 string `json:"id"`
 		Username           string `json:"username"`
-		DisplayName        string `json:"displayname"`
-		ConnectedToSpotify bool   `json:"connectedtospotify"`
-		DatapointCount     int64  `json:"datapointcount"`
+		DisplayName        string `json:"displayName"`
+		ConnectedToSpotify bool   `json:"connectedToSpotify"`
+		DatapointCount     int64  `json:"datapointCount"`
 	}{
 		Id:                 user.Id.(primitive.ObjectID).Hex(),
 		Username:           user.Username,

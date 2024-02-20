@@ -1,8 +1,7 @@
 import axios from "axios";
-import * as process from "process";
 
 const httpClient = axios.create({
-  baseURL: process.env.VITE_API_URL,
+  baseURL: '/backend'
 });
 
 httpClient.interceptors.request.use((config) => {
