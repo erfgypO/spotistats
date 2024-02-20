@@ -331,6 +331,8 @@ func HandleSignIn(writer http.ResponseWriter, request *http.Request) {
 		return
 	}
 
+	log.Printf("Token expires at %d", tokenResponse.ExpiresAt)
+
 	writeJsonResponse(writer, tokenResponse, 200)
 }
 
