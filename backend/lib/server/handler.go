@@ -296,13 +296,15 @@ func HandleSignIn(writer http.ResponseWriter, request *http.Request) {
 	}
 
 	var signInRequest LoginRequest
+
 	err = json.Unmarshal(body, &signInRequest)
 	if err != nil {
 		log.Println(err)
 		writer.WriteHeader(500)
 		return
 	}
-
+	
+	log.Printf("Sign in user %s", signInRequest.Username)
 	mongoClient, err := data.CreateClient()
 	if err != nil {
 		log.Println(err)

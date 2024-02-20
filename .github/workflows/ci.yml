@@ -50,7 +50,7 @@ jobs:
           push: true
           tags: |
             jhell/spotistats-ui:${{ github.run_number }}.${{ github.run_attempt }}
-            jhell/spotistats:latest
+            jhell/spotistats-ui:latest
   
   deploy-frontend:
     runs-on: ubuntu-latest
