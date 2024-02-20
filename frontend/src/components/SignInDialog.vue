@@ -1,7 +1,7 @@
 <script setup lang="ts">
+import {useRouter} from "vue-router";
 import {computed, ref} from "vue";
 import {useAppStore} from "@/store/app";
-import {useRouter} from "vue-router";
 import {useUserStore} from "@/store/user";
 
 const username = defineModel<string>("username");
@@ -28,31 +28,27 @@ async function login() {
     console.log('Login failed');
   }
 }
-
 </script>
 
 <template>
-  <v-card max-width="750px" class="mx-auto">
-    <v-card-title>Login</v-card-title>
-    <v-card-text>
-      <v-form>
-        <v-row>
-          <v-col cols="12">
-            <v-text-field label="Username" v-model="username" hide-details />
-          </v-col>
-          <v-col cols="12">
-            <v-text-field label="Password" v-model="password" type="password" hide-details />
-          </v-col>
-          <v-col cols="12" md="6">
-            <v-btn block color="primary" :disabled="disableButtons" @click="login" :loading="loadingBtn === 'login'">Login</v-btn>
-          </v-col>
-          <v-col cols="12" md="6">
-            <v-btn block color="primary" variant="outlined" :disabled="disableButtons">Create Account</v-btn>
-          </v-col>
-        </v-row>
-      </v-form>
-    </v-card-text>
-  </v-card>
+  <v-form>
+    <v-row>
+      <v-col cols="12">
+        <v-text-field label="Username" v-model="username" hide-details />
+      </v-col>
+      <v-col cols="12">
+        <v-text-field label="Password" v-model="password" type="password" hide-details />
+      </v-col>
+      <v-col cols="12" md="12">
+        <v-btn block
+               color="primary"
+               :disabled="disableButtons"
+               @click="login" :loading="loadingBtn === 'login'"
+               text="Sign in"
+        />
+      </v-col>
+    </v-row>
+  </v-form>
 </template>
 
 <style scoped>

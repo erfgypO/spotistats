@@ -399,13 +399,11 @@ func HandleGetStats(writer http.ResponseWriter, request *http.Request) {
 	for _, datapoint := range datapoints {
 		if datapoint.Data.Item.Type == "track" {
 			//artistCount[datapoint.Data.Item.Artists[0].Name]++
-			for _, artist := range datapoint.Data.Item.Artists {
-				artistData[artist.ID] = NameCount{
-					Name:  artist.Name,
-					Count: artistData[artist.ID].Count + 1,
-				}
-				artistCount++
+			artistData[datapoint.Data.Item.Artists[0].ID] = NameCount{
+				Name:  datapoint.Data.Item.Artists[0].Name,
+				Count: artistData[datapoint.Data.Item.Artists[0].ID].Count + 1,
 			}
+			artistCount++
 
 			trackData[datapoint.Data.Item.ID] = NameCount{
 				Name:  datapoint.Data.Item.Name,

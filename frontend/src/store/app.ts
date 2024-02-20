@@ -28,6 +28,25 @@ export const useAppStore = defineStore('app', {
       } catch (e) {
         console.error(e);
       }
+    },
+    async signUp(username: string, password: string) {
+      try {
+        const response = await httpClient.post<LoginResponse>('/sign-up', {
+          username,
+          password
+        });
+
+        if(response.status === 200) {
+          this.accessToken = response.data.accessToken;
+          this.expiresAt = response.data.expiresAt;
+          localStorage.setItem('token', this.accessToken);
+
+          const userStore = useUserStore();
+          await userStore.fetchUser();
+        }
+      } catch (e) {
+        console.error(e);
+      }
     }
   },
   persist: true,

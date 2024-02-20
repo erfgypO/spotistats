@@ -28,12 +28,12 @@ const routes = [
     component: () => import('@/layouts/default/Anon.vue'),
     children: [
       {
-        path: 'login',
-        name: 'Login',
+        path: 'auth',
+        name: 'Auth',
         // route level code-splitting
         // this generates a separate chunk (Home-[hash].js) for this route
         // which is lazy-loaded when the route is visited.
-        component: () => import('@/views/Login.vue'),
+        component: () => import('@/views/Auth.vue'),
       },
     ]
   }
@@ -47,7 +47,7 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
   const appStore = useAppStore();
   if(!to.path.startsWith('/anon') && (appStore.expiresAt * 1000 <= Date.now() || localStorage.getItem('token') === null)){
-    next('/anon/login');
+    next('/anon/auth');
     return;
   }
 
