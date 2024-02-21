@@ -1,10 +1,19 @@
 <script setup lang="ts">
 import {computed, onMounted} from "vue";
 import {useUserStore} from "@/store/user";
+import {useRouter} from "vue-router";
 
 const userStore = useUserStore();
-onMounted(() => {
-  userStore.getSpotifyAuthUrl();
+const router = useRouter();
+
+onMounted(async () => {
+  await userStore.fetchUser()
+
+  if(userStore.connectedToSpotify) {
+    await router.push('/');
+  }
+
+  await userStore.getSpotifyAuthUrl();
 });
 
 const loading = computed(() => userStore.connectSpotifyUrl === '');
