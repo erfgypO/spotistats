@@ -15,6 +15,11 @@
       <v-col cols="12" md="6">
         <v-sheet class="pa-3" rounded>
           <span class="text-h4">Top Artists</span>
+          <div>
+            <apexchart
+              :series="statsStore.artistChartData.series"
+              :options="statsStore.artistChartData.chartOptions" type="radar" width="100%" />
+          </div>
           <v-table>
             <thead>
               <tr>
@@ -36,6 +41,11 @@
       <v-col cols="12" md="6">
         <v-sheet class="pa-3" rounded>
           <span class="text-h4">Top Tracks</span>
+          <div >
+            <apexchart
+              :series="statsStore.tracksChartData.series"
+              :options="statsStore.tracksChartData.chartOptions" type="radar" width="100%" />
+          </div>
           <v-table>
             <thead>
               <tr>
@@ -107,3 +117,7 @@ onMounted(() => {
   onTimeRangeChange();
 });
 </script>
+
+<style scoped>
+
+</style>

@@ -8,6 +8,8 @@
 import '@mdi/font/css/materialdesignicons.css'
 import 'vuetify/styles'
 
+import colors from "@/utils/colors";
+
 // Composables
 import { createVuetify } from 'vuetify'
 
@@ -16,10 +18,7 @@ export default createVuetify({
   theme: {
     themes: {
       dark: {
-        colors: {
-          primary: '#03998f',
-          secondary: '#9e1bbe',
-        },
+        colors,
       },
     },
   },
