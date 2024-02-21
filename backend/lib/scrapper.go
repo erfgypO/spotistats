@@ -66,7 +66,9 @@ func runScrapper() {
 	for _, userEntity := range userEntities {
 		wg.Add(1)
 		go func(user data.UserEntity) {
+			log.Printf("Scraping data for user: %s", user.Uid)
 			if user.Token.ExpiresAt-5 <= time.Now().Unix() {
+				log.Printf("Refreshing token for user: %s", user.Uid)
 				client := spotify.CreateSpotifyClient()
 				token, err := client.RefreshAccessToken(user.Token.RefreshToken)
 				if err != nil {
@@ -86,6 +88,7 @@ func runScrapper() {
 					log.Printf("Error updating token for user: %s", user.Uid)
 					return
 				}
+				log.Printf("Token refreshed for user: %s", user.Uid)
 			}
 
 			scrapDataForUser(user, results, &wg)
