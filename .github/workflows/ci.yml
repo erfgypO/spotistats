@@ -57,9 +57,3 @@ jobs:
           config: ${{ secrets.KUBE_CONFIG }}
           version: v1.29.1
           command: set image deployment/spotistats-ui-deployment spotistats-ui=jhell/spotistats-ui:${{ github.run_number }}.${{ github.run_attempt }}
-      - name: Update crawler deployment image
-        uses: steebchen/kubectl@v2.0.0
-        with:
-          config: ${{ secrets.KUBE_CONFIG }}
-          version: v1.29.1
-          command: set image deployment/spotistats-crawler-deployment spotistats-crawler=jhell/spotistats:${{ github.run_number }}.${{ github.run_attempt }}
