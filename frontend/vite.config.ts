@@ -36,9 +36,9 @@ export default defineConfig({
     extensions: ['.js', '.json', '.jsx', '.mjs', '.ts', '.tsx', '.vue'],
   },
   server: {
-    port: 3000,
+    port: 3001,
     proxy: {
-      '/backend': 'https://spotistats.501st.tech'
+      '/backend': 'http://localhost:3000' //'https://spotistats.501st.tech'
     }
   },
 })

@@ -14,7 +14,7 @@ export const useStatsStore = defineStore('stats', {
           artists: Stat[];
           tracks: Stat[];
         }
-        const response = await httpClient.get<StatsResponse>(`/stats?after=${after}`);
+        const response = await httpClient.get<StatsResponse>(`/auth/stats?after=${after}`);
 
         if(response.status === 200) {
           this.artists = response.data.artists.slice(0,10); //.filter(stat => stat.datapointCount >= 6);

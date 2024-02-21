@@ -13,7 +13,7 @@ export const useUserStore = defineStore('user', {
   actions: {
     async fetchUser() {
       try {
-        const response = await httpClient.get<UserResponse>('/user/me');
+        const response = await httpClient.get<UserResponse>('/auth/user/me');
         if(response.status === 200) {
           this.username = response.data.username;
           this.displayName = response.data.displayName;
@@ -29,7 +29,7 @@ export const useUserStore = defineStore('user', {
         interface ConnectSpotifyResponse {
           url: string;
         }
-        const response = await httpClient.get<ConnectSpotifyResponse>('/auth-url');
+        const response = await httpClient.get<ConnectSpotifyResponse>('/auth/url');
         if(response.status === 200) {
           this.connectSpotifyUrl = response.data.url;
         }

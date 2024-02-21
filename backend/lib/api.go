@@ -2,23 +2,28 @@ package spotistats
 
 import (
 	"github.com/erfgypO/spotistats/lib/server"
-	"log"
-	"net/http"
+	echojwt "github.com/labstack/echo-jwt/v4"
+	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 	"os"
 )
 
 func runApi() {
-	mux := http.NewServeMux()
+	e := echo.New()
 
-	mux.HandleFunc("GET /auth-url", server.UseAuth(server.HandleGetAuthUrl))
-	mux.HandleFunc("GET /auth-redirect", server.HandleAuthRedirect)
-	mux.HandleFunc("GET /ping", server.UseAuth(server.HandlePing))
-	mux.HandleFunc("POST /sign-up", server.HandleSignUp)
-	mux.HandleFunc("POST /sign-in", server.HandleSignIn)
-	mux.HandleFunc("GET /user/me", server.UseAuth(server.HandleGetMe))
-	mux.HandleFunc("GET /stats", server.UseAuth(server.HandleGetStats))
-	err := http.ListenAndServe(os.Getenv("API_URL"), mux)
-	if err != nil {
-		log.Panicln(err)
-	}
+	e.Use(middleware.Logger())
+
+	e.POST("/sign-up", server.HandleSignUp)
+	e.POST("/sign-in", server.HandleSignIn)
+
+	e.GET("/auth-redirect", server.HandleAuthRedirect)
+
+	authGroup := e.Group("/auth")
+	authGroup.Use(echojwt.WithConfig(echojwt.Config{
+		SigningKey: []byte(os.Getenv("JWT_SECRET")),
+	}))
+	authGroup.GET("/url", server.HandleGetAuthUrl)
+	authGroup.GET("/user/me", server.HandleGetMe)
+	authGroup.GET("/stats", server.HandleGetStats)
+	e.Logger.Fatal(e.Start(os.Getenv("API_URL")))
 }
