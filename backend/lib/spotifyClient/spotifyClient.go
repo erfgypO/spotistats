@@ -3,6 +3,7 @@ package spotifyClient
 import (
 	"encoding/base64"
 	"encoding/json"
+	"errors"
 	"io/ioutil"
 	"net/http"
 	"net/url"
@@ -78,6 +79,11 @@ func (client *SpotifyClient) RefreshAccessToken(refreshToken string) (Token, err
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return Token{}, err
+	}
+
+	if resp.StatusCode != 200 {
+		bodyString := string(body)
+		return Token{}, errors.New(bodyString)
 	}
 
 	var token Token

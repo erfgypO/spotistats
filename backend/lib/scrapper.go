@@ -74,6 +74,7 @@ func runScrapper() {
 				client := spotify.CreateSpotifyClient()
 				token, err := client.RefreshAccessToken(user.Token.RefreshToken)
 				if err != nil {
+					log.Printf("Error: %s", err.Error())
 					log.Printf("Error refreshing token for user: %s", user.Id)
 					return
 				}
