@@ -19,3 +19,11 @@ type DataPercentage struct {
 	Percentage     float64 `json:"percentage"`
 	DatapointCount int     `json:"datapointCount"`
 }
+
+type UserResponse struct {
+	Id                 string `json:"id"`
+	Username           string `json:"username"`
+	DisplayName        string `json:"displayName"`
+	ConnectedToSpotify bool   `json:"connectedToSpotify"`
+	DatapointCount     int64  `json:"datapointCount"`
+}
