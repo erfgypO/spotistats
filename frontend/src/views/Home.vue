@@ -1,11 +1,16 @@
 <template>
   <v-container fluid>
     <v-row>
-      <v-col cols="12" sm="8" lg="10">
-        <span class="text-h3">Stats</span>
+      <v-col cols="12" md="6" class="d-flex align-center" v-if="$vuetify.display.mdAndUp">
+        <div class="text-h3">Stats</div>
       </v-col>
-      <v-col cols="12" sm="4" lg="2">
-        <v-select variant="outlined"  v-model="selectedTimeRange" :items="timeRange" label="Time range" item-title="text" @update:modelValue="onTimeRangeChange" />
+      <v-col cols="12" md="6" class="d-flex align-center">
+        <div class="d-flex flex-row" :class="$vuetify.display.mdAndUp ? 'ml-auto' : 'mx-auto'">
+        <v-btn-toggle divided variant="outlined" v-model="btnGroupModel" color="primary"
+                      @update:modelValue="onTimeRangeChange">
+          <v-btn v-for="range in timeRange" :key="range" :text="range" />
+        </v-btn-toggle>
+        </div>
       </v-col>
       <v-col cols="12" md="6">
         <v-sheet class="pa-3" rounded>
@@ -54,21 +59,14 @@
 </template>
 
 <script lang="ts" setup>
-import {onMounted} from "vue";
+import {computed, onMounted} from "vue";
 import {useStatsStore} from "@/store/stats";
 import { secondsToString } from "@/utils/secondsToString";
+import {useDisplay} from "vuetify";
 
-const timeRange = [
-  {text: 'Last 1 hour', value: '1h'},
-  {text: 'Last 24 hours', value: '24h'},
-  {text: 'Last 7 days', value: '7d'},
-  {text: 'Last 30 days', value: '30d'},
-  {text: 'Last 90 days', value: '90d'},
-  {text: 'Last 365 days', value: '365d'},
-  {text: 'All time', value: 'all'}
-];
+const timeRange = ['1h', '24h', '7d', '30d', '90d', '365d', 'all'];
 
-const selectedTimeRange = defineModel('selectedTimeRange', { default: '1h'});
+const btnGroupModel = defineModel('btnGroupModel', { default: 0 });
 const statsStore = useStatsStore();
 
 function createAfterDate(value: string) {
@@ -102,10 +100,10 @@ function createAfterDate(value: string) {
 }
 
 async function onTimeRangeChange() {
-  await statsStore.fetchStats(createAfterDate(selectedTimeRange.value));
+  await statsStore.fetchStats(createAfterDate(timeRange[btnGroupModel.value]));
 }
 
 onMounted(() => {
-  statsStore.fetchStats(createAfterDate(selectedTimeRange.value));
+  onTimeRangeChange();
 });
 </script>
