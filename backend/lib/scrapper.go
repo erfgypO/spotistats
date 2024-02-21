@@ -48,7 +48,9 @@ func runScrapper() {
 	collection := mongoClient.Database("spotistats").Collection(data.UserCollectionName)
 
 	var userEntities []data.UserEntity
-	cursor, err := collection.Find(context.TODO(), bson.D{})
+	cursor, err := collection.Find(context.TODO(), bson.D{
+		{"connectedtospotify", true},
+	})
 	if err != nil {
 		log.Printf("Error getting data from mongo: %s", err)
 		return
@@ -85,10 +87,10 @@ func runScrapper() {
 
 				_, err = collection.UpdateOne(context.TODO(), filter, update)
 				if err != nil {
-					log.Printf("Error updating token for user: %s", user.Uid)
+					log.Printf("Error updating token for user: %s", user.Id)
 					return
 				}
-				log.Printf("Token refreshed for user: %s", user.Uid)
+				log.Printf("Token refreshed for user: %s", user.Id)
 			}
 
 			scrapDataForUser(user, results, &wg)
