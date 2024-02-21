@@ -1,8 +1,10 @@
 package server
 
 import (
+	"errors"
 	"github.com/erfgypO/spotistats/lib/data"
 	"github.com/golang-jwt/jwt/v5"
+	"github.com/labstack/echo/v4"
 	"os"
 	"time"
 )
@@ -27,19 +29,14 @@ func createJWT(user data.UserEntity) (TokenResponse, error) {
 	}, nil
 }
 
-func verifyJWT(tokenString string) (jwt.MapClaims, bool) {
-	token, err := jwt.ParseWithClaims(tokenString, jwt.MapClaims{}, func(token *jwt.Token) (interface{}, error) {
-		return []byte(os.Getenv("JWT_SECRET")), nil
-	})
-
-	if err != nil {
-		return nil, false
+func getClaimsFromContext(c echo.Context) (jwt.MapClaims, error) {
+	token, ok := c.Get("user").(*jwt.Token)
+	if !ok {
+		return nil, errors.New("JWT token missing or invalid")
 	}
-
 	claims, ok := token.Claims.(jwt.MapClaims)
 	if !ok {
-		return nil, ok
+		return nil, errors.New("failed to cast claims as jwt.MapClaims")
 	}
-
-	return claims, ok
+	return claims, nil
 }
