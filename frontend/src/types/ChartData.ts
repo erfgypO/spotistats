@@ -46,7 +46,7 @@ export interface RadarChartOptions {
   }
 }
 
-export const DefaultRadarChartOptions: RadarChartOptions = {
+export const DefaultRadarChartOptions = {
   responsive: true,
   maintainAspectRatio: false,
   elements: {
