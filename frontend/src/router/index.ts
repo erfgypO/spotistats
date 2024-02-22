@@ -20,6 +20,11 @@ const routes = [
         path: 'connect',
         name: 'Connect',
         component: () => import('@/views/ConnectSpotify.vue'),
+      },
+      {
+        path: 'account',
+        name: 'Account',
+        component: () => import('@/views/Account.vue'),
       }
     ],
   },
@@ -48,6 +53,9 @@ router.beforeEach((to, from, next) => {
   const appStore = useAppStore();
   if(!to.path.startsWith('/anon') && (appStore.expiresAt * 1000 <= Date.now() || localStorage.getItem('token') === null)){
     next('/anon/auth');
+    appStore.expiresAt = 0;
+    appStore.accessToken = "";
+
     return;
   }
 

@@ -1,6 +1,8 @@
 import {defineStore} from "pinia";
 import httpClient from "@/store/httpClient";
-import {UserResponse} from "@/types/response";
+import {ErrorResponse, UserResponse} from "@/types/response";
+import {AxiosError} from "axios";
+import {useMessageStore} from "@/store/message";
 
 export const useUserStore = defineStore('user', {
   state: () => ({
@@ -20,11 +22,35 @@ export const useUserStore = defineStore('user', {
           this.connectedToSpotify = response.data.connectedToSpotify;
           this.datapointCount = response.data.datapointCount;
         }
+
       } catch (e) {
-        console.error(e);
+        const response = (e as AxiosError)?.response?.data as ErrorResponse;
+
+        if(response) {
+          useMessageStore().showMessage(response.error, "error");
+        }
       }
     },
-    async getSpotifyAuthUrl() {
+    async updatePassword(password: string) {
+      try {
+        const response = await httpClient.put('/auth/user/update-password', {
+          password
+        });
+
+        if(response.status === 200) {
+          useMessageStore().showMessage("Password updated", "success");
+        } else {
+          useMessageStore().showMessage("Failed to update password", "error");
+        }
+      } catch (e) {
+        const response = (e as AxiosError)?.response?.data as ErrorResponse;
+
+        if(response) {
+          useMessageStore().showMessage(response.error, "error");
+        }
+      }
+    },
+    async fetchSpotifyAuthUrl() {
       try {
         interface ConnectSpotifyResponse {
           url: string;

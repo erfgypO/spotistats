@@ -1,14 +1,12 @@
 <template>
   <v-container fluid>
     <v-row>
-      <v-col cols="12" md="6" class="d-flex align-center" v-if="$vuetify.display.mdAndUp">
-        <div class="text-h3">Stats</div>
-      </v-col>
+      <page-title-col title="Dashboard" />
       <v-col cols="12" md="6" class="d-flex align-center">
         <div class="d-flex flex-row" :class="$vuetify.display.mdAndUp ? 'ml-auto' : 'mx-auto'">
         <v-btn-toggle divided variant="outlined" v-model="btnGroupModel" color="primary"
                       @update:modelValue="onTimeRangeChange">
-          <v-btn v-for="range in timeRange" :key="range" :text="range" />
+          <v-btn v-for="range in statsStore.timeRange" :key="range" :text="range" />
         </v-btn-toggle>
         </div>
       </v-col>
@@ -17,9 +15,6 @@
           <span class="text-h4">Top Artists</span>
           <div class="chart-container">
             <artists-radar-chart />
-            <!--<apexchart
-              :series="statsStore.artistChartData.series"
-              :options="statsStore.artistChartData.chartOptions" type="radar" width="100%" />-->
           </div>
           <v-table>
             <thead>
@@ -83,10 +78,9 @@ import {useStatsStore} from "@/store/stats";
 import { secondsToString } from "@/utils/secondsToString";
 import ArtistsRadarChart from "@/components/ArtistsRadarChart.vue";
 import TracksRadarChart from "@/components/TracksRadarChart.vue";
+import PageTitleCol from "@/components/PageTitleCol.vue";
 
-const timeRange = ['1h', '24h', '7d', '30d', '90d', '365d', 'all'];
-
-const btnGroupModel = defineModel('btnGroupModel', { default: 1 });
+const btnGroupModel = defineModel('btnGroupModel', { type: Number });
 const statsStore = useStatsStore();
 
 function createAfterDate(value: string) {
@@ -120,10 +114,12 @@ function createAfterDate(value: string) {
 }
 
 async function onTimeRangeChange() {
-  await statsStore.fetchStats(createAfterDate(timeRange[btnGroupModel.value]));
+  statsStore.selectedTimeRange = btnGroupModel.value!;
+  await statsStore.fetchStats(createAfterDate(statsStore.timeRange[statsStore.selectedTimeRange]));
 }
 
 onMounted(() => {
+  btnGroupModel.value = statsStore.selectedTimeRange;
   onTimeRangeChange();
 });
 </script>

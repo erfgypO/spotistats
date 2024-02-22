@@ -1,14 +1,21 @@
 // Utilities
 import { defineStore } from 'pinia'
 import httpClient from "@/store/httpClient";
-import {LoginResponse} from "@/types/response";
+import {ErrorResponse, LoginResponse} from "@/types/response";
 import {useUserStore} from "@/store/user";
+import {AxiosError} from "axios";
+import {useMessageStore} from "@/store/message";
 
 export const useAppStore = defineStore('app', {
   state: () => ({
     accessToken: "",
     expiresAt: 0,
   }),
+  getters: {
+    isAuthenticated(): boolean {
+      return this.accessToken.length > 0;
+    }
+  },
   actions: {
     async login(username: string, password: string) {
       try {
@@ -26,7 +33,11 @@ export const useAppStore = defineStore('app', {
           await userStore.fetchUser();
         }
       } catch (e) {
-        console.error(e);
+        const response = (e as AxiosError)?.response?.data as ErrorResponse;
+
+        if(response) {
+          useMessageStore().showMessage(response.error, "error");
+        }
       }
     },
     async signUp(username: string, password: string) {
@@ -45,7 +56,11 @@ export const useAppStore = defineStore('app', {
           await userStore.fetchUser();
         }
       } catch (e) {
-        console.error(e);
+        const response = (e as AxiosError)?.response?.data as ErrorResponse;
+
+        if(response) {
+          useMessageStore().showMessage(response.error, "error");
+        }
       }
     }
   },

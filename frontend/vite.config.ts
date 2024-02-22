@@ -38,7 +38,11 @@ export default defineConfig({
   server: {
     port: 3000,
     proxy: {
-      '/backend': 'https://soundstats.501st.tech'
+      '/backend':{
+        target: 'http://localhost:3333',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/backend/, ''),
+      },
     }
   },
 })

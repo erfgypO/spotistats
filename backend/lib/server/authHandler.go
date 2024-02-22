@@ -23,6 +23,16 @@ func HandleSignUp(c echo.Context) error {
 		return err
 	}
 
+	if len(signUpRequest.Username) == 0 {
+		errorResponse := ErrorResponse{Error: "Username cannot be empty"}
+		return c.JSON(http.StatusBadRequest, errorResponse)
+	}
+
+	if len(signUpRequest.Password) < 8 {
+		errorResponse := ErrorResponse{Error: "Password must be at least 8 characters long"}
+		return c.JSON(http.StatusBadRequest, errorResponse)
+	}
+
 	mongoClient, err := data.CreateClient()
 	if err != nil {
 		c.Logger().Error(err)
@@ -94,6 +104,16 @@ func HandleSignIn(c echo.Context) error {
 		return err
 	}
 
+	if len(signInRequest.Username) == 0 {
+		errorResponse := ErrorResponse{Error: "Username cannot be empty"}
+		return c.JSON(http.StatusBadRequest, errorResponse)
+	}
+
+	if len(signInRequest.Password) == 0 {
+		errorResponse := ErrorResponse{Error: "Password cannot be empty"}
+		return c.JSON(http.StatusBadRequest, errorResponse)
+	}
+
 	mongoClient, err := data.CreateClient()
 	if err != nil {
 		c.Logger().Error(err)
@@ -126,7 +146,7 @@ func HandleGetAuthUrl(c echo.Context) error {
 	if err != nil {
 		return err
 	}
-	
+
 	responseType := "code"
 	clientId := os.Getenv("SPOTIFY_CLIENT_ID")
 	scope := "user-read-currently-playing"

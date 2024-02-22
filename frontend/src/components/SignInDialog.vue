@@ -28,16 +28,22 @@ async function login() {
     console.log('Login failed');
   }
 }
+
+async function onEnter() {
+  if (!disableButtons.value) {
+    await login();
+  }
+}
 </script>
 
 <template>
   <v-form>
     <v-row>
       <v-col cols="12">
-        <v-text-field label="Username" v-model="username" hide-details />
+        <v-text-field label="Username" v-model="username" hide-details @keydown.enter="onEnter" />
       </v-col>
       <v-col cols="12">
-        <v-text-field label="Password" v-model="password" type="password" hide-details />
+        <v-text-field label="Password" v-model="password" type="password" hide-details @keydown.enter="onEnter" />
       </v-col>
       <v-col cols="12" md="12">
         <v-btn block

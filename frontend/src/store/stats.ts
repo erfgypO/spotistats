@@ -1,13 +1,15 @@
 import {defineStore} from "pinia";
 import {Stat} from "@/types/Stat";
 import httpClient from "@/store/httpClient";
-import {ChartData} from "@/types/ChartData";
 import {colors, rgbToRgba} from "@/utils/colors";
+import {useMessageStore} from "@/store/message";
 
 export const useStatsStore = defineStore('stats', {
   state: () => ({
     artists: [] as Stat[],
     tracks: [] as Stat[],
+    timeRange: ['1h', '24h', '7d', '30d', '90d', '365d', 'all'],
+    selectedTimeRange: 1,
   }),
   getters: {
 
@@ -42,6 +44,7 @@ export const useStatsStore = defineStore('stats', {
   },
   actions: {
     async fetchStats(after: number) {
+      const messageStore = useMessageStore();
       try {
         interface StatsResponse {
           artists: Stat[];
@@ -54,7 +57,7 @@ export const useStatsStore = defineStore('stats', {
           this.tracks = response.data.tracks.slice(0,10); //.filter(stat => stat.datapointCount >= 6);
         }
       } catch (e) {
-        console.error(e);
+        messageStore.showMessage("Failed to fetch stats", "error")
       }
     },
   },

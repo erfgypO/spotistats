@@ -13,7 +13,7 @@ onMounted(async () => {
     await router.push('/');
   }
 
-  await userStore.getSpotifyAuthUrl();
+  await userStore.fetchSpotifyAuthUrl();
 });
 
 const loading = computed(() => userStore.connectSpotifyUrl === '');

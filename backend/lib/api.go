@@ -24,6 +24,7 @@ func runApi() {
 	}))
 	authGroup.GET("/url", server.HandleGetAuthUrl)
 	authGroup.GET("/user/me", server.HandleGetMe)
+	authGroup.PUT("/user/update-password", server.HandleUpdatePassword)
 	authGroup.GET("/stats", server.HandleGetStats)
 	e.Logger.Fatal(e.Start(os.Getenv("API_URL")))
 }
