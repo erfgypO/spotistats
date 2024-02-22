@@ -2,7 +2,7 @@ import {defineStore} from "pinia";
 import {Stat} from "@/types/Stat";
 import httpClient from "@/store/httpClient";
 import {ChartData} from "@/types/ChartData";
-import colors from "@/utils/colors";
+import {colors, rgbToRgba} from "@/utils/colors";
 
 export const useStatsStore = defineStore('stats', {
   state: () => ({
@@ -10,56 +10,33 @@ export const useStatsStore = defineStore('stats', {
     tracks: [] as Stat[],
   }),
   getters: {
-    artistChartData(): ChartData {
+
+    artistChartData(): any {
       return {
-        series: [
+        labels: this.artists.map((stat: Stat) => stat.name),
+        datasets: [
           {
-            name: 'Top Artists',
-            data: this.artists.map((stat: Stat) => stat.percentage * 100),
+            label: 'Top Artists',
+            data: this.artists.map((stat: Stat) => stat.datapointCount * 10 / 60),
+            backgroundColor: rgbToRgba(colors.primary, 0.2),
+            borderColor: colors.primary,
+            borderWidth: 1
           }
-        ],
-        chartOptions: {
-          labels: this.artists.map((stat: Stat) => stat.name),
-          theme: {
-            mode: 'dark'
-          },
-          stroke: {
-            show: true,
-            width: 2,
-            colors: [colors.primary],
-            dashArray: 0
-          },
-          fill: {
-            opacity: 0.5,
-            colors: [colors.primary]
-          }
-        }
+        ]
       }
     },
-    tracksChartData(): ChartData {
+    tracksChartData(): any {
       return {
-        series: [
+        labels: this.tracks.map((stat: Stat) => stat.name.replace('(', '-(').split('-').map((s: string) => s.trim())),
+        datasets: [
           {
-            name: 'Top Tracks',
-            data: this.tracks.map((stat: Stat) => stat.percentage * 100),
+            label: 'Top Tracks',
+            data: this.tracks.map((stat: Stat) => stat.datapointCount * 10 / 60),
+            backgroundColor: rgbToRgba(colors.secondary, 0.2),
+            borderColor: colors.secondary,
+            borderWidth: 1
           }
-        ],
-        chartOptions: {
-          labels: this.tracks.map((stat: Stat) => stat.name),
-          theme: {
-            mode: 'dark'
-          },
-          stroke: {
-            show: true,
-            width: 2,
-            colors: [colors.secondary],
-            dashArray: 0
-          },
-          fill: {
-            opacity: 0.5,
-            colors: [colors.secondary]
-          }
-        }
+        ]
       }
     }
   },

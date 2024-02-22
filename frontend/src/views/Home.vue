@@ -15,10 +15,11 @@
       <v-col cols="12" md="6">
         <v-sheet class="pa-3" rounded>
           <span class="text-h4">Top Artists</span>
-          <div>
-            <apexchart
+          <div class="chart-container">
+            <artists-radar-chart />
+            <!--<apexchart
               :series="statsStore.artistChartData.series"
-              :options="statsStore.artistChartData.chartOptions" type="radar" width="100%" />
+              :options="statsStore.artistChartData.chartOptions" type="radar" width="100%" />-->
           </div>
           <v-table>
             <thead>
@@ -41,10 +42,8 @@
       <v-col cols="12" md="6">
         <v-sheet class="pa-3" rounded>
           <span class="text-h4">Top Tracks</span>
-          <div >
-            <apexchart
-              :series="statsStore.tracksChartData.series"
-              :options="statsStore.tracksChartData.chartOptions" type="radar" width="100%" />
+          <div class="chart-container">
+            <tracks-radar-chart />
           </div>
           <v-table>
             <thead>
@@ -69,14 +68,15 @@
 </template>
 
 <script lang="ts" setup>
-import {computed, onMounted} from "vue";
+import {onMounted} from "vue";
 import {useStatsStore} from "@/store/stats";
 import { secondsToString } from "@/utils/secondsToString";
-import {useDisplay} from "vuetify";
+import ArtistsRadarChart from "@/components/ArtistsRadarChart.vue";
+import TracksRadarChart from "@/components/TracksRadarChart.vue";
 
 const timeRange = ['1h', '24h', '7d', '30d', '90d', '365d', 'all'];
 
-const btnGroupModel = defineModel('btnGroupModel', { default: 0 });
+const btnGroupModel = defineModel('btnGroupModel', { default: 1 });
 const statsStore = useStatsStore();
 
 function createAfterDate(value: string) {
@@ -119,5 +119,8 @@ onMounted(() => {
 </script>
 
 <style scoped>
-
+.chart-container {
+  height: 400px;
+  width: 100%;
+}
 </style>
