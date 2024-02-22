@@ -14,38 +14,6 @@ export interface ChartOptions {
     colors: string[];
   }
 }
-
-export interface RadarChartOptions {
-  responsive: boolean;
-  maintainAspectRatio: boolean;
-  elements?: {
-    line?: {
-      borderWidth: number;
-    }
-  },
-  plugins?: {
-    datalabels?: {
-      formatter: (value: any, context: any) => string;
-    }
-  },
-  scales?: {
-    r?: {
-      grid?: {
-        color: string;
-      },
-      display: boolean;
-      ticks?: {
-        display: boolean;
-      },
-      angleLines?: {
-        display: boolean;
-        color: string;
-      },
-      suggestedMin: number;
-    }
-  }
-}
-
 export const DefaultRadarChartOptions = {
   responsive: true,
   maintainAspectRatio: false,

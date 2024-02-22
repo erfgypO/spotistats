@@ -38,7 +38,7 @@ export default defineConfig({
   server: {
     port: 3000,
     proxy: {
-      '/backend': 'https://spotistats.501st.tech'
+      '/backend': 'https://soundstats.501st.tech'
     }
   },
 })

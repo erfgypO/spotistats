@@ -27,6 +27,9 @@
                 <th></th>
                 <th>Artist</th>
                 <th>Time</th>
+                <th class="text-center">
+                  <v-icon icon="mdi-spotify" color="green" />
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -34,6 +37,9 @@
                 <td>{{index + 1}}</td>
                 <td>{{artist.name}}</td>
                 <td>{{ secondsToString(artist.datapointCount * 10)}}</td>
+                <td class="text-center"><a :href="artist.spotifyUrl" target="_blank">
+                  open
+                </a></td>
               </tr>
             </tbody>
           </v-table>
@@ -51,6 +57,9 @@
                 <th></th>
                 <th>Track</th>
                 <th>Time</th>
+                <th class="text-center">
+                  <v-icon color="green" icon="mdi-spotify" />
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -58,6 +67,7 @@
               <td>{{index + 1}}</td>
               <td>{{track.name}}</td>
               <td>{{ secondsToString(track.datapointCount * 10)}}</td>
+              <td class="text-center"><a :href="track.spotifyUrl" target="_blank">open</a></td>
             </tr>
             </tbody>
           </v-table>
