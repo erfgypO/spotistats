@@ -59,6 +59,7 @@ func HandleGetStats(c echo.Context) error {
 	type NameCount struct {
 		Name  string
 		Count int
+		Url   string
 	}
 
 	artistData := make(map[string]NameCount)
@@ -72,12 +73,14 @@ func HandleGetStats(c echo.Context) error {
 			artistData[datapoint.Data.Item.Artists[0].ID] = NameCount{
 				Name:  datapoint.Data.Item.Artists[0].Name,
 				Count: artistData[datapoint.Data.Item.Artists[0].ID].Count + 1,
+				Url:   datapoint.Data.Item.Artists[0].ExternalUrls.Spotify,
 			}
 			artistCount++
 
 			trackData[datapoint.Data.Item.ID] = NameCount{
 				Name:  datapoint.Data.Item.Name,
 				Count: trackData[datapoint.Data.Item.ID].Count + 1,
+				Url:   datapoint.Data.Item.ExternalUrls.Spotify,
 			}
 			trackCount++
 		}
@@ -97,6 +100,7 @@ func HandleGetStats(c echo.Context) error {
 			Name:           item.Name,
 			Percentage:     percentage,
 			DatapointCount: item.Count,
+			SpotifyUrl:     item.Url,
 		})
 	}
 
@@ -110,6 +114,7 @@ func HandleGetStats(c echo.Context) error {
 			Name:           item.Name,
 			Percentage:     percentage,
 			DatapointCount: item.Count,
+			SpotifyUrl:     item.Url,
 		})
 	}
 

@@ -16,6 +16,7 @@ type LoginRequest struct {
 
 type DataPercentage struct {
 	Name           string  `json:"name"`
+	SpotifyUrl     string  `json:"spotifyUrl"`
 	Percentage     float64 `json:"percentage"`
 	DatapointCount int     `json:"datapointCount"`
 }
