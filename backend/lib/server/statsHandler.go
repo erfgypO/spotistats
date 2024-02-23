@@ -68,30 +68,44 @@ func HandleGetStats(c echo.Context) error {
 	trackData := make(map[string]NameCount)
 	trackCount := 0
 
-	for _, datapoint := range datapoints {
-		if datapoint.Data.Item.Type == "track" {
-			artistData[datapoint.Data.Item.Artists[0].ID] = NameCount{
-				Name:  datapoint.Data.Item.Artists[0].Name,
-				Count: artistData[datapoint.Data.Item.Artists[0].ID].Count + 1,
-				Url:   datapoint.Data.Item.Artists[0].ExternalUrls.Spotify,
-			}
-			artistCount++
+	albumData := make(map[string]NameCount)
+	albumCount := 0
 
-			trackData[datapoint.Data.Item.ID] = NameCount{
-				Name:  datapoint.Data.Item.Name,
-				Count: trackData[datapoint.Data.Item.ID].Count + 1,
-				Url:   datapoint.Data.Item.ExternalUrls.Spotify,
-			}
-			trackCount++
+	for _, datapoint := range datapoints {
+		if datapoint.Data.Item.Type != "track" {
+			continue
 		}
+
+		artistData[datapoint.Data.Item.Artists[0].ID] = NameCount{
+			Name:  datapoint.Data.Item.Artists[0].Name,
+			Count: artistData[datapoint.Data.Item.Artists[0].ID].Count + 1,
+			Url:   datapoint.Data.Item.Artists[0].ExternalUrls.Spotify,
+		}
+		artistCount++
+
+		trackData[datapoint.Data.Item.ID] = NameCount{
+			Name:  datapoint.Data.Item.Name,
+			Count: trackData[datapoint.Data.Item.ID].Count + 1,
+			Url:   datapoint.Data.Item.ExternalUrls.Spotify,
+		}
+		trackCount++
+
+		albumData[datapoint.Data.Item.Album.ID] = NameCount{
+			Name:  datapoint.Data.Item.Album.Name,
+			Count: albumData[datapoint.Data.Item.Album.ID].Count + 1,
+			Url:   datapoint.Data.Item.Album.ExternalUrls.Spotify,
+		}
+		albumCount++
 	}
 
 	response := struct {
 		Artists []DataPercentage `json:"artists"`
 		Tracks  []DataPercentage `json:"tracks"`
+		Albums  []DataPercentage `json:"albums"`
 	}{
 		Artists: make([]DataPercentage, 0),
 		Tracks:  make([]DataPercentage, 0),
+		Albums:  make([]DataPercentage, 0),
 	}
 
 	for _, item := range artistData {
@@ -105,7 +119,7 @@ func HandleGetStats(c echo.Context) error {
 	}
 
 	sort.Slice(response.Artists, func(i, j int) bool {
-		return response.Artists[i].DatapointCount > response.Artists[j].DatapointCount
+		return response.Artists[i].DatapointCount >= response.Artists[j].DatapointCount
 	})
 
 	for _, item := range trackData {
@@ -119,7 +133,21 @@ func HandleGetStats(c echo.Context) error {
 	}
 
 	sort.Slice(response.Tracks, func(i, j int) bool {
-		return response.Tracks[i].DatapointCount > response.Tracks[j].DatapointCount
+		return response.Tracks[i].DatapointCount >= response.Tracks[j].DatapointCount
+	})
+
+	for _, item := range albumData {
+		percentage := float64(item.Count) / float64(trackCount)
+		response.Albums = append(response.Albums, DataPercentage{
+			Name:           item.Name,
+			Percentage:     percentage,
+			DatapointCount: item.Count,
+			SpotifyUrl:     item.Url,
+		})
+	}
+
+	sort.Slice(response.Albums, func(i, j int) bool {
+		return response.Albums[i].DatapointCount >= response.Albums[j].DatapointCount
 	})
 
 	return c.JSON(http.StatusOK, response)

@@ -10,7 +10,7 @@
         </v-btn-toggle>
         </div>
       </v-col>
-      <v-col cols="12" md="6">
+      <v-col cols="12" md="6" xl="4">
         <v-sheet class="pa-3" rounded>
           <span class="text-h4">Top Artists</span>
           <div class="chart-container">
@@ -40,7 +40,7 @@
           </v-table>
         </v-sheet>
       </v-col>
-      <v-col cols="12" md="6">
+      <v-col cols="12" md="6" xl="4">
         <v-sheet class="pa-3" rounded>
           <span class="text-h4">Top Tracks</span>
           <div class="chart-container">
@@ -68,6 +68,36 @@
           </v-table>
         </v-sheet>
       </v-col>
+      <v-col cols="12" md="6" offset-md="3" xl="4" offset-xl="0">
+        <v-sheet class="pa-3" rounded>
+          <span class="text-h4">Top Albums</span>
+          <div class="chart-container">
+            <albums-radar-chart />
+          </div>
+          <v-table>
+            <thead>
+            <tr>
+              <th></th>
+              <th>Album</th>
+              <th>Time</th>
+              <th class="text-center">
+                <v-icon icon="mdi-spotify" color="green" />
+              </th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr v-for="(album, index) in statsStore.albums" :key="album.name">
+              <td>{{index + 1}}</td>
+              <td>{{album.name}}</td>
+              <td>{{ secondsToString(album.datapointCount * 10)}}</td>
+              <td class="text-center"><a :href="album.spotifyUrl" target="_blank">
+                open
+              </a></td>
+            </tr>
+            </tbody>
+          </v-table>
+        </v-sheet>
+      </v-col>
     </v-row>
   </v-container>
 </template>
@@ -79,6 +109,7 @@ import { secondsToString } from "@/utils/secondsToString";
 import ArtistsRadarChart from "@/components/ArtistsRadarChart.vue";
 import TracksRadarChart from "@/components/TracksRadarChart.vue";
 import PageTitleCol from "@/components/PageTitleCol.vue";
+import AlbumsRadarChart from "@/components/AlbumsRadarChart.vue";
 
 const btnGroupModel = defineModel('btnGroupModel', { type: Number });
 const statsStore = useStatsStore();

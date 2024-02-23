@@ -8,6 +8,7 @@ export const useStatsStore = defineStore('stats', {
   state: () => ({
     artists: [] as Stat[],
     tracks: [] as Stat[],
+    albums: [] as Stat[],
     timeRange: ['1h', '24h', '7d', '30d', '90d', '365d', 'all'],
     selectedTimeRange: 1,
   }),
@@ -40,6 +41,20 @@ export const useStatsStore = defineStore('stats', {
           }
         ]
       }
+    },
+    albumsChartData(): any {
+      return {
+        labels: this.albums.map((stat: Stat) => stat.name.replace('(', '-(').split('-').map((s: string) => s.trim())),
+        datasets: [
+          {
+            label: 'Top Albums',
+            data: this.albums.map((stat: Stat) => stat.datapointCount * 10 / 60),
+            backgroundColor: rgbToRgba(colors.tertiary, 0.2),
+            borderColor: colors.tertiary,
+            borderWidth: 1
+          }
+        ]
+      }
     }
   },
   actions: {
@@ -49,12 +64,14 @@ export const useStatsStore = defineStore('stats', {
         interface StatsResponse {
           artists: Stat[];
           tracks: Stat[];
+          albums: Stat[];
         }
         const response = await httpClient.get<StatsResponse>(`/auth/stats?after=${after}`);
 
         if(response.status === 200) {
           this.artists = response.data.artists.slice(0,10); //.filter(stat => stat.datapointCount >= 6);
           this.tracks = response.data.tracks.slice(0,10); //.filter(stat => stat.datapointCount >= 6);
+          this.albums = response.data.albums.slice(0, 10);
         }
       } catch (e) {
         messageStore.showMessage("Failed to fetch stats", "error")
