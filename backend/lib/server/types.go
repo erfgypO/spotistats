@@ -28,3 +28,9 @@ type UserResponse struct {
 	ConnectedToSpotify bool   `json:"connectedToSpotify"`
 	DatapointCount     int64  `json:"datapointCount"`
 }
+
+type HourlyStats struct {
+	Hour     int    `json:"hour"`
+	Seconds  int    `json:"seconds"`
+	SongName string `json:"songName"`
+}
