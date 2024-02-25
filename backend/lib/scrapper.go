@@ -2,12 +2,15 @@ package spotistats
 
 import (
 	"context"
+	"github.com/EdlinOrg/prominentcolor"
 	"github.com/erfgypO/spotistats/lib/data"
 	spotify "github.com/erfgypO/spotistats/lib/spotifyClient"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
+	"image"
 	"log"
+	"net/http"
 	"os"
 	"sync"
 	"time"
@@ -26,10 +29,42 @@ func scrapDataForUser(user data.UserEntity, results chan<- data.Datapoint, wg *s
 		return
 	}
 
+	imgCount := len(currentlyPlaying.Item.Album.Images)
+	imgEntry := currentlyPlaying.Item.Album.Images[imgCount-1]
+	imgResp, err := http.DefaultClient.Get(imgEntry.URL)
+	if err != nil {
+		return
+	}
+	defer func() {
+		err = imgResp.Body.Close()
+		if err != nil {
+			log.Printf("Error closing response body: %s", err)
+		}
+	}()
+
+	img, _, err := image.Decode(imgResp.Body)
+	if err != nil {
+		log.Printf("Error decoding image: %s", err)
+		return
+	}
+
+	prominentColors, err := prominentcolor.Kmeans(img)
+	if err != nil {
+		log.Printf("Error getting prominent colors: %s", err)
+		return
+	}
+
+	primaryColor := prominentColors[0]
+	
 	results <- data.Datapoint{
 		Owner:     user.Id,
 		Data:      currentlyPlaying,
 		CreatedAt: time.Now().Unix(),
+		PrimaryColor: data.RGB{
+			R: primaryColor.Color.R,
+			G: primaryColor.Color.G,
+			B: primaryColor.Color.B,
+		},
 	}
 }
 
