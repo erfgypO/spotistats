@@ -25,7 +25,7 @@ func scrapDataForUser(user data.UserEntity, results chan<- data.Datapoint, wg *s
 		return
 	}
 
-	if !currentlyPlaying.IsPlaying {
+	if !currentlyPlaying.IsPlaying || currentlyPlaying.CurrentlyPlayingType != "track" {
 		return
 	}
 
@@ -55,7 +55,7 @@ func scrapDataForUser(user data.UserEntity, results chan<- data.Datapoint, wg *s
 	}
 
 	primaryColor := prominentColors[0]
-	
+
 	results <- data.Datapoint{
 		Owner:     user.Id,
 		Data:      currentlyPlaying,
