@@ -167,6 +167,12 @@ func HandleGetStatsGroupedByHour(c echo.Context) error {
 		return errors.New("failed to parse after query param")
 	}
 
+	tzOffsetQuery := c.QueryParams().Get("tzOffset")
+	tzOffset, err := strconv.ParseInt(tzOffsetQuery, 10, 64)
+	if err != nil {
+		tzOffset = 0
+	}
+
 	mongoClient, err := data.CreateClient()
 	if err != nil {
 		return err
@@ -219,6 +225,7 @@ func HandleGetStatsGroupedByHour(c echo.Context) error {
 					{"$multiply", bson.A{"$createdat", 1000}},
 				}},
 			}},
+			{"timestamp", "$createdat"},
 			{"songName", "$data.item.name"},
 		}},
 	}
@@ -226,7 +233,8 @@ func HandleGetStatsGroupedByHour(c echo.Context) error {
 	matchStage := bson.D{
 		{"$match", bson.D{
 			{"owner", id},
-			{"date", bson.D{{"$gte", after}}},
+			//{"date", bson.D{{"$gte", after}}},
+			{"timestamp", bson.D{{"$gte", after}}},
 			{"songName", bson.D{{"$ne", ""}}},
 		}},
 	}
@@ -244,7 +252,7 @@ func HandleGetStatsGroupedByHour(c echo.Context) error {
 	projectStage := bson.D{
 		{"$project", bson.D{
 			{"_id", 0},
-			{"hour", bson.D{{"$add", bson.A{bson.D{{"$hour", "$date"}}, 1}}}},
+			{"hour", bson.D{{"$add", bson.A{"$_id.hour", tzOffset}}}},
 			{"seconds", 1},
 			{"songName", "$_id.songName"},
 		}},
