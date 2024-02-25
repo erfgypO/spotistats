@@ -1,5 +1,7 @@
 package server
 
+import "github.com/erfgypO/spotistats/lib/data"
+
 type ErrorResponse struct {
 	Error string `json:"error"`
 }
@@ -27,4 +29,11 @@ type UserResponse struct {
 	DisplayName        string `json:"displayName"`
 	ConnectedToSpotify bool   `json:"connectedToSpotify"`
 	DatapointCount     int64  `json:"datapointCount"`
+}
+
+type HourlyStats struct {
+	Hour     int      `json:"hour"`
+	Seconds  int      `json:"seconds"`
+	SongName string   `json:"songName"`
+	Color    data.RGB `json:"color"`
 }

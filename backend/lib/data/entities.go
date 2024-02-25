@@ -19,9 +19,16 @@ type TokenEntity struct {
 	ExpiresAt    int64
 }
 
+type RGB struct {
+	R uint32 `json:"r"`
+	G uint32 `json:"g"`
+	B uint32 `json:"b"`
+}
+
 type Datapoint struct {
-	Id        interface{}              `json:"id" bson:"_id,omitempty"`
-	Owner     interface{}              `json:"owner"`
-	Data      spotify.CurrentlyPlaying `json:"data"`
-	CreatedAt int64                    `json:"createdat"`
+	Id           interface{}              `json:"id" bson:"_id,omitempty"`
+	Owner        interface{}              `json:"owner"`
+	Data         spotify.CurrentlyPlaying `json:"data"`
+	CreatedAt    int64                    `json:"createdat"`
+	PrimaryColor RGB                      `json:"primarycolor"`
 }

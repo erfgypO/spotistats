@@ -24,7 +24,7 @@ const statsStore = useStatsStore()
 </script>
 
 <template>
-<Radar :options="DefaultRadarChartOptions" :data="statsStore.artistChartData" />
+  <Radar :options="DefaultRadarChartOptions" :data="statsStore.albumsChartData" />
 </template>
 
 <style scoped>

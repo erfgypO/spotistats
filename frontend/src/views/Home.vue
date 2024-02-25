@@ -10,62 +10,39 @@
         </v-btn-toggle>
         </div>
       </v-col>
-      <v-col cols="12" md="6">
+      <v-col cols="12">
+        <v-sheet class="pa-3" rounded>
+          <span class="text-h4">Hourly Stats</span>
+          <div class="hourly-chart-container" :style="{height: $vuetify.display.xlAndUp ? '500px':'300px'}">
+        <hourly-stats-chart />
+          </div>
+        </v-sheet>
+      </v-col>
+      <v-col cols="12" md="6" xl="4">
         <v-sheet class="pa-3" rounded>
           <span class="text-h4">Top Artists</span>
           <div class="chart-container">
             <artists-radar-chart />
           </div>
-          <v-table>
-            <thead>
-              <tr>
-                <th></th>
-                <th>Artist</th>
-                <th>Time</th>
-                <th class="text-center">
-                  <v-icon icon="mdi-spotify" color="green" />
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="(artist, index) in statsStore.artists" :key="artist.name">
-                <td>{{index + 1}}</td>
-                <td>{{artist.name}}</td>
-                <td>{{ secondsToString(artist.datapointCount * 10)}}</td>
-                <td class="text-center"><a :href="artist.spotifyUrl" target="_blank">
-                  open
-                </a></td>
-              </tr>
-            </tbody>
-          </v-table>
+          <stats-table :stats="statsStore.artists" name="Artist" />
         </v-sheet>
       </v-col>
-      <v-col cols="12" md="6">
+      <v-col cols="12" md="6" xl="4">
         <v-sheet class="pa-3" rounded>
           <span class="text-h4">Top Tracks</span>
           <div class="chart-container">
             <tracks-radar-chart />
           </div>
-          <v-table>
-            <thead>
-              <tr>
-                <th></th>
-                <th>Track</th>
-                <th>Time</th>
-                <th class="text-center">
-                  <v-icon color="green" icon="mdi-spotify" />
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-            <tr v-for="(track, index) in statsStore.tracks" :key="track.name">
-              <td>{{index + 1}}</td>
-              <td>{{track.name}}</td>
-              <td>{{ secondsToString(track.datapointCount * 10)}}</td>
-              <td class="text-center"><a :href="track.spotifyUrl" target="_blank">open</a></td>
-            </tr>
-            </tbody>
-          </v-table>
+          <stats-table :stats="statsStore.tracks" name="Track" />
+        </v-sheet>
+      </v-col>
+      <v-col cols="12" xl="4" offset-xl="0">
+        <v-sheet class="pa-3" rounded>
+          <span class="text-h4">Top Albums</span>
+          <div class="chart-container">
+            <albums-radar-chart />
+          </div>
+          <stats-table :stats="statsStore.albums" name="Album" />
         </v-sheet>
       </v-col>
     </v-row>
@@ -75,10 +52,12 @@
 <script lang="ts" setup>
 import {onMounted} from "vue";
 import {useStatsStore} from "@/store/stats";
-import { secondsToString } from "@/utils/secondsToString";
 import ArtistsRadarChart from "@/components/ArtistsRadarChart.vue";
 import TracksRadarChart from "@/components/TracksRadarChart.vue";
 import PageTitleCol from "@/components/PageTitleCol.vue";
+import AlbumsRadarChart from "@/components/AlbumsRadarChart.vue";
+import StatsTable from "@/components/StatsTable.vue";
+import HourlyStatsChart from "@/components/HourlyStatsChart.vue";
 
 const btnGroupModel = defineModel('btnGroupModel', { type: Number });
 const statsStore = useStatsStore();
@@ -121,10 +100,16 @@ async function onTimeRangeChange() {
 onMounted(() => {
   btnGroupModel.value = statsStore.selectedTimeRange;
   onTimeRangeChange();
+  statsStore.fetchHourlyStats();
 });
 </script>
 
 <style scoped>
+.hourly-chart-container {
+  height: 300px;
+  width: 100%;
+}
+
 .chart-container {
   height: 400px;
   width: 100%;
