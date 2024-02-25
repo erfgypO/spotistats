@@ -50,7 +50,7 @@
 </template>
 
 <script lang="ts" setup>
-import {onMounted} from "vue";
+import {onBeforeUnmount, onMounted} from "vue";
 import {useStatsStore} from "@/store/stats";
 import ArtistsRadarChart from "@/components/ArtistsRadarChart.vue";
 import TracksRadarChart from "@/components/TracksRadarChart.vue";
@@ -97,10 +97,30 @@ async function onTimeRangeChange() {
   await statsStore.fetchStats(createAfterDate(statsStore.timeRange[statsStore.selectedTimeRange]));
 }
 
+let hourlyTimeout: NodeJS.Timeout | null = null;
+let statsTimeout: NodeJS.Timeout | null = null;
+
 onMounted(() => {
   btnGroupModel.value = statsStore.selectedTimeRange;
   onTimeRangeChange();
   statsStore.fetchHourlyStats();
+  hourlyTimeout = setInterval(() => {
+    statsStore.fetchHourlyStats();
+  }, 15_000);
+  statsTimeout = setInterval(() => {
+    if(btnGroupModel.value === 0) {
+      onTimeRangeChange();
+    }
+  }, 15_000); // 1 minute
+});
+
+onBeforeUnmount(() => {
+  if (hourlyTimeout) {
+    clearInterval(hourlyTimeout);
+  }
+  if (statsTimeout) {
+    clearInterval(statsTimeout);
+  }
 });
 </script>
 
