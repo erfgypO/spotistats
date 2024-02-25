@@ -198,6 +198,7 @@ func HandleGetStatsGroupedByHour(c echo.Context) error {
 			}},
 			{"timestamp", "$createdat"},
 			{"songName", "$data.item.name"},
+			{"primaryColor", "$primarycolor"},
 		}},
 	}
 
@@ -217,6 +218,7 @@ func HandleGetStatsGroupedByHour(c echo.Context) error {
 				{"songName", "$songName"},
 			}},
 			{"seconds", bson.D{{"$sum", 10}}},
+			{"color", bson.D{{"$first", "$primaryColor"}}},
 		}},
 	}
 
@@ -225,6 +227,7 @@ func HandleGetStatsGroupedByHour(c echo.Context) error {
 			{"_id", 0},
 			{"hour", bson.D{{"$add", bson.A{"$_id.hour", tzOffset}}}},
 			{"seconds", 1},
+			{"color", 1},
 			{"songName", "$_id.songName"},
 		}},
 	}

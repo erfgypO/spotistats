@@ -63,6 +63,20 @@ export const useStatsStore = defineStore('stats', {
       }
 
       const tracks =[...new Set(this.hourlyStats.map((stat: HourlyStat) => stat.songName))];
+      const trackColors = new Map<string, {border: string}>();
+
+      for(const track of tracks) {
+        if(trackColors.has(track)) continue;
+
+        const color = this.hourlyStats.find((stat: HourlyStat) => stat.songName === track)!.color;
+        const data = {
+          border: `rgb(${color.r}, ${color.g}, ${color.b})`,
+        }
+
+        trackColors.set(track, data);
+      }
+
+
       const datasets = [];
 
       for(const track of tracks) {
@@ -76,8 +90,8 @@ export const useStatsStore = defineStore('stats', {
         datasets.push({
           label: track,
           data,
-          backgroundColor: rgbToRgba(colors.quaternary, 0.1),
-          borderColor: colors.quaternary,
+          backgroundColor: rgbToRgba(trackColors.get(track)!.border, 0.75),
+          borderColor: trackColors.get(track)!.border,
           borderWidth: 2
         });
       }

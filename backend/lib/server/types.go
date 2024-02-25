@@ -1,5 +1,7 @@
 package server
 
+import "github.com/erfgypO/spotistats/lib/data"
+
 type ErrorResponse struct {
 	Error string `json:"error"`
 }
@@ -30,7 +32,8 @@ type UserResponse struct {
 }
 
 type HourlyStats struct {
-	Hour     int    `json:"hour"`
-	Seconds  int    `json:"seconds"`
-	SongName string `json:"songName"`
+	Hour     int      `json:"hour"`
+	Seconds  int      `json:"seconds"`
+	SongName string   `json:"songName"`
+	Color    data.RGB `json:"color"`
 }

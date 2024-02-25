@@ -13,7 +13,7 @@
       <v-col cols="12">
         <v-sheet class="pa-3" rounded>
           <span class="text-h4">Hourly Stats</span>
-          <div class="hourly-chart-container">
+          <div class="hourly-chart-container" :style="{height: $vuetify.display.xlAndUp ? '500px':'300px'}">
         <hourly-stats-chart />
           </div>
         </v-sheet>
@@ -36,7 +36,7 @@
           <stats-table :stats="statsStore.tracks" name="Track" />
         </v-sheet>
       </v-col>
-      <v-col cols="12" md="6" offset-md="3" xl="4" offset-xl="0">
+      <v-col cols="12" xl="4" offset-xl="0">
         <v-sheet class="pa-3" rounded>
           <span class="text-h4">Top Albums</span>
           <div class="chart-container">

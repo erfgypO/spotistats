@@ -15,14 +15,29 @@ const config = computed(() => {
     type: 'bar',
     data: statsStore.hourlyChartData,
     options: {
+      legend: {
+        display: false
+      },
+      plugins: {
+        legend: {
+          display: false
+        },
+      },
       responsive: true,
       maintainAspectRatio: false,
       scales: {
         x: {
           stacked: true,
+          grid: {
+            color: 'rgba(255, 255, 255, 0.1)',
+          },
         },
         y: {
-          stacked: true
+          stacked: true,
+          grid: {
+            color: 'rgba(255, 255, 255, 0.1)',
+          },
+          max: 60,
         }
       }
     }
