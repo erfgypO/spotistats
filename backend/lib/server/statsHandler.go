@@ -188,35 +188,6 @@ func HandleGetStatsGroupedByHour(c echo.Context) error {
 	if err != nil {
 		return err
 	}
-	/*
-		addFieldsStage := bson.D{{"$addFields", bson.D{
-			{"date", bson.D{
-				{"$toDate", bson.D{
-					{"$multiply", bson.A{"$createdat", 1000}},
-				}}}}, {"songName", "$data.item.name"}}}}
-
-		matchStage := bson.D{{"$match", bson.D{
-			{"owner", id},
-			{"date", bson.D{{"$gte", bson.D{{"$toDate", after}}}}},
-			{"songName", bson.D{{"$ne", ""}}},
-		}}}
-
-		groupStage := bson.D{{"$group", bson.D{
-			{"_id", bson.D{
-				{"hour", bson.D{{"$hour", "$date"}}},
-				{"songName", "$songName"},
-			}},
-
-			{"seconds", bson.D{{"$sum", 10}}},
-		}}}
-
-		projectStage := bson.D{{"$project", bson.D{
-			{"_id", 0},
-			{"hour", bson.D{{"$add", bson.A{bson.D{{"$hour", "$date"}}, 1}}}},
-			{"seconds", 1},
-			{"songName", "$_id.songName"},
-		}}}
-	*/
 
 	addFieldsStage := bson.D{
 		{"$addFields", bson.D{
@@ -258,7 +229,14 @@ func HandleGetStatsGroupedByHour(c echo.Context) error {
 		}},
 	}
 
-	cursor, err := collection.Aggregate(context.TODO(), mongo.Pipeline{addFieldsStage, matchStage, groupStage, projectStage})
+	sortStage := bson.D{
+		{"$sort", bson.D{
+			{"hour", 1},
+			{"songName", 1},
+		}}}
+
+	pipeline := mongo.Pipeline{addFieldsStage, matchStage, groupStage, projectStage, sortStage}
+	cursor, err := collection.Aggregate(context.TODO(), pipeline)
 	if err != nil {
 		return err
 	}

@@ -5,6 +5,7 @@ export function rgbToRgba(rgb: string, alpha: number) {
 export const colors = {
   primary: 'rgb(3, 153, 143)',
   secondary: 'rgb(158, 27, 190)',
-  tertiary: 'rgb(211, 47, 47)'
+  tertiary: 'rgb(211, 47, 47)',
+  quaternary: 'rgb(0, 200, 83)',
 }
 
