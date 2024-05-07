@@ -124,6 +124,7 @@ func runScrapper() {
 				_, err = collection.UpdateOne(context.TODO(), filter, update)
 				if err != nil {
 					log.Printf("Error updating token for user: %s", user.Id)
+					wg.Done()
 					return
 				}
 				log.Printf("Token refreshed for user: %s", user.Id)
